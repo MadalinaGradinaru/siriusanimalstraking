@@ -2,12 +2,13 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {
-    getDogs
+    getDogs, requestFBTest
 } from "../actions/actions";
 import Table from 'react-bootstrap/Table'
-import moment from "moment";
+import moment, {months} from "moment";
 import Chart from './prices';
 import FontAwesome from 'react-fontawesome';
+import Facebook from "./facebook";
 
 class DashBoard extends Component {
     constructor(props) {
@@ -16,10 +17,12 @@ class DashBoard extends Component {
             dogs: props.dogs.data || [],
             totalDays: "",
             currentSort: 'default',
-            myValue: ''
+            myValue: '',
+            ages: []
         };
 
         this.getDays = this.getDays.bind(this);
+        this.calculateDob = this.calculateDob.bind(this);
     }
 
     componentWillReceiveProps(nextProps, nextContext) {
@@ -30,6 +33,8 @@ class DashBoard extends Component {
 
     componentWillMount() {
         this.props.getDogs();
+        this.props.requestFBTest()
+
     }
 
     getDays(start, end) {
@@ -63,10 +68,32 @@ class DashBoard extends Component {
         })
     };
 
+
+    calculateDob = (dob) => {
+        let today = new Date().toISOString().split('T')[0],
+            date1 = new Date(dob),
+            date1Year = new Date(today).getFullYear(),
+            date2Year = date1 !== undefined ? new Date(dob).getFullYear() : "",
+            date1Month = new Date(today).getMonth(),
+            date2Month = date1 !== undefined ? new Date(dob).getMonth() : "";
+
+        var months;
+        months = (date1Year - date2Year) * 12;
+        months -= date1Month + 1;
+        months += date2Month;
+
+        if (months) {
+            return (<div><span>{Math.floor(months / 12) - 1 }</span> ani si <span>{months % 12}</span> luni</div>);
+        } else {
+            return  (<p>DOB not added</p>)
+        }
+    };
+
     render() {
         let allDogs = [],
             dogsArrayTable = [],
             costArray = [];
+
         const {currentSort} = this.state;
 
         const sortTypes = {
@@ -80,16 +107,17 @@ class DashBoard extends Component {
             },
             default: {
                 class: 'sort',
-                fn: (a, b) => a
+                fn: (a) => a
             }
         };
 
         this.state.dogs
-            .forEach((dog, i) => {
+            .forEach(dog => {
                 dog.status !== "rest in peace" &&
                 dogsArrayTable.push({
-                    "status":dog.status,
+                    "status": dog.status,
                     "name": dog.name,
+                    "dob": dog.dob,
                     "start": dog.start_date,
                     "end": dog.end_date,
                     "days": this.getDays(dog.start_date, dog.end_date),
@@ -103,10 +131,10 @@ class DashBoard extends Component {
                 return dog.name.toLowerCase().indexOf(this.state.myValue.toLowerCase()) >= 0
             })
             .map((dog, i) => {
-                console.log(dog);
                 dog.status !== "rest in peace" &&
                 allDogs.push(<tr key={i} className={dog.status + " dog-item"}>
                     <td className="name">{dog.name}</td>
+                    <td className="dob">{this.calculateDob(dog.dob)}</td>
                     <td className="start-date">{dog.start}</td>
                     <td className="end_date">{dog.end}</td>
                     <td className="days-number">{dog.days}</td>
@@ -120,6 +148,9 @@ class DashBoard extends Component {
 
         return (
             <div className="container-fluid">
+                <Facebook />
+
+
                 <div className="title-wrapper">
                     <p className='title'>Statistics</p>
                 </div>
@@ -132,6 +163,7 @@ class DashBoard extends Component {
                         <thead>
                         <tr>
                             <th>Name</th>
+                            <th>Data nasterii</th>
                             <th>Start date</th>
                             <th>End date</th>
                             <th>Number of days</th>
@@ -143,7 +175,7 @@ class DashBoard extends Component {
                         </tr>
                         </thead>
                         <tbody>
-                            {allDogs}
+                        {allDogs}
                         </tbody>
                     </Table>
                 </div>
@@ -163,7 +195,8 @@ const mapStateToProps = (state) => {
 
 const matchDispatchToProps = (dispatch) => {
     return bindActionCreators({
-            getDogs: getDogs
+            getDogs: getDogs,
+            requestFBTest: requestFBTest
         },
         dispatch
     );

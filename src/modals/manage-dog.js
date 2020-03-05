@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {closeModal} from '../actions/modal-actions';
-import {dogsStatuses} from '../constants/constants';
+import {dogsStatuses, dogsSize} from '../constants/constants';
 import {
     createDog,
     saveDog,
@@ -10,8 +10,6 @@ import {
 } from '../actions/actions';
 import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
-import DatePicker from 'react-datepicker';
-import moment from 'moment';
 
 class ManageDog extends Component {
     constructor(props) {
@@ -29,13 +27,14 @@ class ManageDog extends Component {
             is_returned: props.dogToBeEdited.is_returned || false,
             new_name: props.dogToBeEdited.new_name || '',
             comments: props.dogToBeEdited.comments || '',
-            start_date: props.dogToBeEdited.start_date || new Date().toISOString().slice(0,10),
-            end_date: props.dogToBeEdited.end_date || new Date().toISOString().slice(0,10)
+            start_date: props.dogToBeEdited.start_date || new Date().toISOString().slice(0, 10),
+            end_date: props.dogToBeEdited.end_date || new Date().toISOString().slice(0, 10)
         };
 
         this.handleChange = this.handleChange.bind(this);
         this.handleGender = this.handleGender.bind(this);
         this.handleStatus = this.handleStatus.bind(this);
+        this.handleSize = this.handleSize.bind(this);
         this.handleReturn = this.handleReturn.bind(this);
         this.saveDog = this.saveDog.bind(this);
         this.updateDog = this.updateDog.bind(this);
@@ -81,13 +80,19 @@ class ManageDog extends Component {
 
     handleGender(e) {
         this.setState({
-            gender: e.label,
+            gender: e.label
         })
     }
 
     handleStatus(e) {
         this.setState({
-            status: e.label,
+            status: e.label
+        })
+    }
+
+    handleSize(e) {
+        this.setState({
+            size: e.label
         })
     }
 
@@ -98,8 +103,20 @@ class ManageDog extends Component {
 
     };
 
+    validate = (inputs) => {
+        //let noErrors = true;
+
+        Object.keys(inputs).map((key) => {
+            if (inputs["name"] !== "") {
+                return true
+            }
+        })
+
+    }
+
     saveDog(e) {
         e.preventDefault();
+
         let inputs = {
             name: this.state.name,
             status: this.state.status,
@@ -116,7 +133,9 @@ class ManageDog extends Component {
             is_returned: this.state.is_returned
         };
 
-        this.props.createDog(inputs)
+        if (inputs.name !== "") {
+            this.props.createDog(inputs)
+        }
     }
 
     updateDog(e) {
@@ -142,6 +161,7 @@ class ManageDog extends Component {
 
     render() {
         let statuses = [],
+            sizes = [],
             button,
             gender = ["male", "female"],
             visibleOnEdit = this.props.formType === "edit" ? "block" : "none";
@@ -152,6 +172,16 @@ class ManageDog extends Component {
                         id="status"
                         name="status"
                         value={status}>{status}
+                </option>
+            )
+        });
+
+        dogsSize.map((size, i) => {
+            sizes.push(
+                <option key={i}
+                        id="size"
+                        name="size"
+                        value={size}>{size}
                 </option>
             )
         });
@@ -193,16 +223,15 @@ class ManageDog extends Component {
                                    id="date-age"
                                    name="start_date"
                                    value={this.state.start_date}
-                                   onChange={this.handleChange_date} />
-                                   -
+                                   onChange={this.handleChange_date}/>
+                            -
                             <input type="date"
                                    id="date-age"
                                    name="end_date"
                                    value={this.state.end_date}
-                                   onChange={this.handleChange_date} />
+                                   onChange={this.handleChange_date}/>
                         </div>
                     </div>
-
 
                     <div className="form-group">
                         <label className="col-md-12">Image</label>
@@ -224,20 +253,17 @@ class ManageDog extends Component {
                                    id="date-age"
                                    name="dob"
                                    defaultValue={this.state.dob}
-                                   onChange={this.handleChange_date} />
+                                   onChange={this.handleChange_date}/>
                         </div>
                     </div>
 
                     <div className="form-group">
                         <label className="col-md-12">Size</label>
                         <div className="col-md-12">
-                            <input id="size"
-                                   type="text"
-                                   className="form-control"
-                                   name="size"
-                                   value={this.state.size}
-                                   onChange={this.handleChange}
-                                   required/>
+                            <Dropdown options={dogsSize}
+                                      onChange={this.handleSize}
+                                      value={this.state.size}
+                                      placeholder='Select a size'/>
                         </div>
                     </div>
 

@@ -13,3 +13,7 @@ export const menuItems = [
 export const dogsStatuses = [
     "available", "reserved", "resident", "gone", "rest in peace", "other"
 ];
+
+export const dogsSize = [
+    "small", "small-medium", "medium", "medium-large", "large"
+];

@@ -9,40 +9,35 @@ class RipDogs extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            dogs: props.dogs.data || []
-        };
-
     }
 
-    componentWillReceiveProps(nextProps, nextContext) {
-        this.setState({
-            dogs: nextProps.dogs,
-        })
-    }
-
-    componentWillMount() {
+    componentDidMount() {
         this.props.getDogsByStatus('rest in peace');
     }
 
-    render() {
-        const dogs = this.state.dogs.map(
+    displayAnimals = () => {
+        const dogs = this.props.dogs.map(
             dog => <div className="dog-item" key={dog.id}>
-                        <p className={dog.status + " name"}>{dog.name}</p>
-                        <p className="status">{dog.status}</p>
-                        <div>
-                            <img src={dog.image} alt=""/>
-                        </div>
-                    </div>
-                );
+                <p className={dog.status + " name"}>{dog.name}</p>
+                <p className="status">{dog.status}</p>
+                <div>
+                    <img src={dog.image} alt=""/>
+                </div>
+            </div>
+        );
+
+        return dogs;
+    }
+
+    render() {
 
         return (
             <div className="container-fluid">
                 <div className="title-wrapper">
-                    <p className='title'>Rest in peace  - {this.state.dogs.length}</p>
+                    <p className='title'>Rest in peace  - {this.props.dogs.length}</p>
                 </div>
                 <div className="dogs row">
-                    {dogs}
+                    {this.displayAnimals()}
                 </div>
             </div>
         )

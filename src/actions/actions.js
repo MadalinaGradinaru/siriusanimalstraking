@@ -1,15 +1,19 @@
-import { request } from '../constants/axios-wrapper';
-import { closeModal } from './modal-actions';
+import {request} from '../constants/axios-wrapper';
+import {closeModal} from './modal-actions';
+import {forEach} from "react-bootstrap/cjs/ElementChildren";
 
 /**
-*  ALL DOGS
-* */
+ *  ALL DOGS
+ * */
 
 export const getDogs = (page) => {
+    console.log(page);
+
+    console.log('gjklasdgjasg')
     let dogsNumber = page === undefined ? '' : '?_page=' + page;
 
     return function (dispatch) {
-        request.get ("/dogs/" + dogsNumber)
+        request.get("/dogs/" + dogsNumber)
             .then((response) => {
                 dispatch(dogsList(response.data));
             })
@@ -20,10 +24,11 @@ export const getDogs = (page) => {
  *  BY STATUS FILTER  DOGS
  * */
 export const getDogsByStatus = (status) => {
+    console.log('GET RESERVED DOGS')
     let dogsStatus = status;
 
     return function (dispatch) {
-        request.get ("/dogs/?status=" + dogsStatus)
+        request.get("/dogs/?status=" + dogsStatus)
             .then((response) => {
                 dispatch(dogsList(response.data));
             })
@@ -80,7 +85,7 @@ export const createDog = (dog) => {
 
 export const openDogToBeEdited = (id) => {
     return function (dispatch) {
-        request.get('/dogs/' +  id)
+        request.get('/dogs/' + id)
             .then((response) => {
                 dispatch(getDogEdit(response));
             })
@@ -133,3 +138,70 @@ export const saveDog = (dog, dogId) => {
 
     }
 };
+
+/**
+ * Move to adopted
+ * **/
+
+export const testFn = (data) => dispatch => dispatch(moveToAdopted(data));
+
+
+export const prepareToMoveToAdopted = (ids) => {
+    ids.forEach(id => {
+        return request.get('/dogs/' + id)
+            .then((response) => {
+                testFn(response.data);
+            })
+    })
+}
+
+export const moveToAdopted = (dog) => {
+    console.log('DOG', dog[0]);
+
+    /*    let dodToBeMoved = {
+            "name": dog.name,
+            "status": "adopted",
+            "image": dog.image || '',
+            "start_date": dog.start_date || '',
+            "end_date": dog.end_date || '',
+            "dob": dog.dob || '',
+            "size": dog.size || '',
+            "gender": dog.gender || '',
+            "medical_status": dog.medical_status || '',
+            "new_name": dog.new_name || '',
+            "last_update": dog.last_update || '',
+            "is_returned": dog.is_returned || false,
+            "comments": dog.comments || ''
+        };*/
+
+    let dogToBeMoved = {
+        "status": "adopted"
+    };
+
+    console.log(dogToBeMoved);
+
+    return function (dispatch) {
+        console.log('test')
+        request.post('/dogs/' + dog[0], dogToBeMoved)
+            .then(() => {
+                dispatch(getDogsByStatus("reserved"));
+            })
+    }
+}
+
+
+/**
+ * FACEBOOK REQUEST TEST
+ * */
+
+export const requestFBTest = () => {
+
+    return function (dispatch) {
+
+        console.log("TEST")
+
+    }
+}
+
+
+

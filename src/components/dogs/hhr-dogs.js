@@ -51,7 +51,7 @@ class HHRDogs extends Component {
         return (
             <div className="container-fluid">
                 <div className="title-wrapper">
-                    <p className='title'> All gone  will be rendered here  - {this.state.dogs.length}</p>
+                    <p className='title'> All gone  will be rendered here  - {this.props.dogs.length}</p>
                 </div>
                 <input type="text"
                        placeholder='Search by title'

@@ -5,31 +5,24 @@ import {
     getDogsByStatus,
     openEditDogModal,
     openDogToBeEdited,
+    moveToAdopted,
+    getDogs
+    // prepareToMoveToAdopted
 } from "../../actions/actions";
 import Dog from './dog';
-import logger from "less/lib/less/logger";
 
 class ReservedDogs extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            dogs: props.dogs.data || [],
             myValue: '',
             selectedItems: {},
             action: 'add'
         };
-
-        this.selectTheDog = this.selectTheDog.bind(this)
     }
 
-    componentWillReceiveProps(nextProps, nextContext) {
-        this.setState({
-            dogs: nextProps.dogs,
-        })
-    }
-
-    componentWillMount() {
+    componentDidMount() {
         this.props.getDogsByStatus('reserved');
         localStorage.setItem('status', "reserved");
     }
@@ -58,46 +51,62 @@ class ReservedDogs extends Component {
     getSelectedDogs = () => {
         const dogNames = Object.keys(this.state.selectedItems).reduce((acc, id) => {
             if (!this.state.selectedItems[id] || !this.state.selectedItems[id].checked) {
-                return <p>acc</p>;
+                return [...acc];
             }
-
-            return [...acc, <p>{this.state.selectedItems[id].name}</p>];
+            return [...acc, <p key={id}>{this.state.selectedItems[id].name}</p>];
         }, []);
 
         return (<div>{dogNames}</div>)
     };
 
-    render() {
+    functionTest = () => {
+        let selectedIds = Object.keys(this.state.selectedItems);
+
+        getDogs(selectedIds);
+
+    }
+
+    displayAnimals = () => {
+        const {dogs} = this.props;
+
         let dogItem = [];
 
-        dogItem = this.state.dogs
-            .filter(dog => {
-                return dog.name.toLowerCase().indexOf(this.state.myValue.toLowerCase()) >= 0
-            })
-            .map(dog => (<Dog key={"dog_" + dog.id}
-                              item={dog}
-                              openEditDogModal={this.props.openEditDogModal}
-                              dogToBeEdited={this.props.openDogToBeEdited}
-                              selectDog={this.selectTheDog}
-                              edit/>)
+        dogItem = dogs.filter(dog => {
+            return dog.name.toLowerCase().indexOf(this.state.myValue.toLowerCase()) >= 0
+        })
+            .map(dog => (<Dog
+                    key={`doc-${dog.id}`}
+                    item={dog}
+                    openEditDogModal={this.props.openEditDogModal}
+                    dogToBeEdited={this.props.openDogToBeEdited}
+                    selectDog={this.selectTheDog}
+                    edit
+                />)
             );
 
+        return dogItem;
+    }
+
+    render() {
         return (
             <div className="container-fluid">
                 <div className="title-wrapper">
-                    <p className='title'> All reserved will be rendered here - {this.state.dogs.length}</p>
+                    <p className='title'> All reserved will be rendered here - {this.props.dogs.length}</p>
                 </div>
-                <input type="text"
-                       placeholder='Search by title'
-                       ref={(value) => this.myValue = value}
-                       onChange={this.filterByTitle}/>
+                <input
+                    type="text"
+                    placeholder='Search by title'
+                    ref={(value) => this.myValue = value}
+                    onChange={this.filterByTitle}
+                />
 
                 <div className="dogs row" style={{width: "80%", float: "left"}}>
-                    {dogItem}
+                    {this.displayAnimals()}
                 </div>
                 <div className="selected-dogs" style={{width: "20%", float: "left"}}>
                     Selected Dogs
                     {this.getSelectedDogs()}
+                    <button className="btn" onClick={this.functionTest}>Move to Adopted</button>
                 </div>
             </div>
         )
@@ -117,6 +126,9 @@ const matchDispatchToProps = (dispatch) => {
             getDogsByStatus: getDogsByStatus,
             openEditDogModal: openEditDogModal,
             openDogToBeEdited: openDogToBeEdited,
+            moveToAdopted: moveToAdopted,
+            getDogs: getDogs,
+            // prepareToMoveToAdopted: prepareToMoveToAdopted
         },
         dispatch
     );

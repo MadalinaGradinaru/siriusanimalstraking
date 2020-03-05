@@ -36,31 +36,39 @@ class OtherDogs extends Component {
         })
     };
 
-    render() {
+    displayAnimals = () => {
+        const {dogs} = this.props;
+
         let dogItem = [];
 
-        dogItem = this.state.dogs
-            .filter(dog => {
-                return dog.name.toLowerCase().indexOf(this.state.myValue.toLowerCase()) >= 0
-            })
-            .map(dog => (<Dog key={"dog_" + dog.id}
-                              item={dog}
-                              openEditDogModal={this.props.openEditDogModal}
-                              dogToBeEdited={this.props.openDogToBeEdited}
-                              edit/>)
+        dogItem = dogs.filter(dog => {
+            return dog.name.toLowerCase().indexOf(this.state.myValue.toLowerCase()) >= 0
+        })
+            .map(dog => (<Dog
+                    key={`doc-${dog.id}`}
+                    item={dog}
+                    openEditDogModal={this.props.openEditDogModal}
+                    dogToBeEdited={this.props.openDogToBeEdited}
+                    selectDog={this.selectTheDog}
+                    edit
+                />)
             );
 
+        return dogItem;
+    }
+
+    render() {
         return (
             <div className="container-fluid">
                 <div className="title-wrapper">
-                    <p className='title'> Other reasons  - {this.state.dogs.length}</p>
+                    <p className='title'> Other reasons  - {this.props.dogs.length}</p>
                 </div>
                 <input type="text"
                        placeholder='Search by title'
                        ref={(value) => this.myValue = value}
                        onChange={this.filterByTitle}/>
                 <div className="dogs row">
-                    {dogItem}
+                    {this.displayAnimals()}
                 </div>
             </div>
         )

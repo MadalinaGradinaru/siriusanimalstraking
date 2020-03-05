@@ -6,13 +6,15 @@ import {
     openCreateDogModal
 } from "../../actions/actions";
 import {closeModal} from '../../actions/modal-actions';
+import Dog from "./dog";
 
 class Dogs extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            dogs: props.dogs.data || []
+            dogs: props.dogs.data || [],
+            myValue: ''
         };
     }
 
@@ -25,29 +27,50 @@ class Dogs extends Component {
     componentWillMount() {
         this.props.getDogs();
         localStorage.setItem('status', "")
+    }
 
+    filterByTitle = () => {
+        this.setState({
+            myValue: this.myValue.value
+        })
+    };
+
+    displayAnimals = () => {
+        const {dogs} = this.props;
+
+        let dogItem = [];
+
+        dogItem = dogs.filter(dog => {
+            return dog.name.toLowerCase().indexOf(this.state.myValue.toLowerCase()) >= 0
+        })
+            .map(dog => (<Dog
+                    key={`doc-${dog.id}`}
+                    item={dog}
+                    openEditDogModal={this.props.openEditDogModal}
+                    dogToBeEdited={this.props.openDogToBeEdited}
+                    selectDog={this.selectTheDog}
+                    edit
+                />)
+            );
+
+        return dogItem;
     }
 
     render() {
-        const dogs = this.state.dogs.map(
-            dog => <div className={dog.status + " dog-item"} key={dog.id}>
-                <p className="name">{dog.name}</p>
-                <p className="status">{dog.status}</p>
-                <div>
-                    <img src={dog.image} alt=""/>
-                </div>
-            </div>
-        );
         return (
             <div className="container-fluid">
                 <div className="title-wrapper">
                     <p className='title'> All dogs will be rendered here - {this.state.dogs.length}</p>
+                    <input type="text"
+                           placeholder='Search by title'
+                           ref={(value) => this.myValue = value}
+                           onChange={this.filterByTitle}/>
                     <button className="create"
                             onClick={() => this.props.openCreateDogModal()}>Add a dog
                     </button>
                 </div>
                 <div className="dogs row">
-                    {dogs}
+                    {this.displayAnimals()}
                 </div>
             </div>
         )
