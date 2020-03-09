@@ -2,8 +2,8 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {
-    getDogs,
-    openCreateDogModal
+    getDogs, getDogsByStatus,
+    openCreateDogModal, openDogToBeEdited, openEditDogModal
 } from "../../actions/actions";
 import {closeModal} from '../../actions/modal-actions';
 import Dog from "./dog";
@@ -54,7 +54,7 @@ class Dogs extends Component {
             );
 
         return dogItem;
-    }
+    };
 
     render() {
         return (
@@ -89,7 +89,10 @@ const matchDispatchToProps = (dispatch) => {
     return bindActionCreators({
             getDogs: getDogs,
             closeModal: closeModal,
-            openCreateDogModal: openCreateDogModal
+            openCreateDogModal: openCreateDogModal,
+            getDogsByStatus: getDogsByStatus,
+            openEditDogModal: openEditDogModal,
+            openDogToBeEdited: openDogToBeEdited,
         },
         dispatch
     );

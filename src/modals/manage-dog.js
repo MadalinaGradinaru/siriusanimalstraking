@@ -188,7 +188,7 @@ class ManageDog extends Component {
 
         button = this.props.formType ?
             <button className="btn btn-default" onClick={this.updateDog}>Save and close</button> :
-            <button className="btn btn-default" onClick={this.saveDog}>Save and close</button>;
+            <button className="btn btn-default" onClick={this.saveDog}>Create and close</button>;
 
         return (
             <div>

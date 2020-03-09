@@ -41,9 +41,9 @@ class OtherDogs extends Component {
 
         let dogItem = [];
 
-        dogItem = dogs.filter(dog => {
+        dogItem = dogs/*.filter(dog => {
             return dog.name.toLowerCase().indexOf(this.state.myValue.toLowerCase()) >= 0
-        })
+        })*/
             .map(dog => (<Dog
                     key={`doc-${dog.id}`}
                     item={dog}

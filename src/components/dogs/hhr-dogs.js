@@ -38,9 +38,9 @@ class HHRDogs extends Component {
         let dogItem = [];
 
         dogItem = this.state.dogs
-            .filter(dog => {
+/*            .filter(dog => {
                 return dog.name.toLowerCase().indexOf(this.state.myValue.toLowerCase()) >= 0
-            })
+            })*/
             .map(dog => (<Dog key={"dog_" + dog.id}
                               item={dog}
                               openEditDogModal={this.props.openEditDogModal}

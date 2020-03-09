@@ -127,9 +127,9 @@ class DashBoard extends Component {
 
         dogsArrayTable
             .sort(sortTypes[currentSort].fn)
-            .filter(dog => {
+/*            .filter(dog => {
                 return dog.name.toLowerCase().indexOf(this.state.myValue.toLowerCase()) >= 0
-            })
+            })*/
             .map((dog, i) => {
                 dog.status !== "rest in peace" &&
                 allDogs.push(<tr key={i} className={dog.status + " dog-item"}>

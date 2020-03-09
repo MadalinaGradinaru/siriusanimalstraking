@@ -3,6 +3,7 @@ import React from 'react';
 const Dog = (props) => {
     let dogItem = [];
 
+
     Object.keys(props.item)
           .map((key, i) => {
               dogItem = <div key={key + '_' + i}>

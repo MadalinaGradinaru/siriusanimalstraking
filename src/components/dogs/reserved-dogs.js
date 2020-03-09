@@ -5,9 +5,8 @@ import {
     getDogsByStatus,
     openEditDogModal,
     openDogToBeEdited,
-    moveToAdopted,
-    getDogs
-    // prepareToMoveToAdopted
+     //moveToAdopted,
+    prepareToMoveToAdopted
 } from "../../actions/actions";
 import Dog from './dog';
 
@@ -42,10 +41,9 @@ class ReservedDogs extends Component {
                 [item.id]: {
                     checked,
                     name: item.name
-                },
+                }
             }
         }));
-
     };
 
     getSelectedDogs = () => {
@@ -61,9 +59,8 @@ class ReservedDogs extends Component {
 
     functionTest = () => {
         let selectedIds = Object.keys(this.state.selectedItems);
-
-        getDogs(selectedIds);
-
+        // const happyObj = { ids: selectedIds };
+        this.props.prepareToMoveToAdopted({ ids: selectedIds });
     }
 
     displayAnimals = () => {
@@ -126,9 +123,8 @@ const matchDispatchToProps = (dispatch) => {
             getDogsByStatus: getDogsByStatus,
             openEditDogModal: openEditDogModal,
             openDogToBeEdited: openDogToBeEdited,
-            moveToAdopted: moveToAdopted,
-            getDogs: getDogs,
-            // prepareToMoveToAdopted: prepareToMoveToAdopted
+            //moveToAdopted: moveToAdopted,
+            prepareToMoveToAdopted: prepareToMoveToAdopted
         },
         dispatch
     );
