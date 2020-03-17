@@ -5,8 +5,8 @@ import {
     getDogsByStatus,
     openEditDogModal,
     openDogToBeEdited,
-     //moveToAdopted,
-    prepareToMoveToAdopted
+     moveToAdopted,
+    //prepareToMoveToAdopted
 } from "../../actions/actions";
 import Dog from './dog';
 
@@ -59,13 +59,12 @@ class ReservedDogs extends Component {
 
     functionTest = () => {
         let selectedIds = Object.keys(this.state.selectedItems);
-        // const happyObj = { ids: selectedIds };
-        this.props.prepareToMoveToAdopted({ ids: selectedIds });
+
+        this.props.moveToAdopted(selectedIds);
     }
 
     displayAnimals = () => {
-        const {dogs} = this.props;
-
+        const { dogs } = this.props;
         let dogItem = [];
 
         dogItem = dogs.filter(dog => {
@@ -123,8 +122,8 @@ const matchDispatchToProps = (dispatch) => {
             getDogsByStatus: getDogsByStatus,
             openEditDogModal: openEditDogModal,
             openDogToBeEdited: openDogToBeEdited,
-            //moveToAdopted: moveToAdopted,
-            prepareToMoveToAdopted: prepareToMoveToAdopted
+            moveToAdopted: moveToAdopted,
+            // prepareToMoveToAdopted: prepareToMoveToAdopted
         },
         dispatch
     );

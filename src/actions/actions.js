@@ -1,17 +1,24 @@
 import {request} from '../constants/axios-wrapper';
 import {closeModal} from './modal-actions';
 import {forEach} from "react-bootstrap/cjs/ElementChildren";
+import logger from "less/lib/less/logger";
 
 /**
  *  ALL DOGS
  * */
 
-export const getDogs = (page) => {
-    let dogsNumber = page === undefined ? '' : '?_page=' + page;
+export const getDogs = (page, limit) => {
+
+/*    let pagination = page === undefined ? '' : '?_page=' + page;
+    let limitation = limit === undefined ? '' : '?_limit=' + limit;*/
+    let p = 1;
+    let l = 10;
 
     return function (dispatch) {
-        request.get("/dogs/" + dogsNumber)
+         request.get("/dogs?_page=" + p )
+        // request.get("/dogs" )
             .then((response) => {
+                //console.log(response.headers.link);
                 dispatch(dogsList(response.data));
             })
     }
@@ -21,10 +28,8 @@ export const getDogs = (page) => {
  *  BY STATUS FILTER  DOGS
  * */
 export const getDogsByStatus = (status) => {
-    let dogsStatus = status;
-
     return function (dispatch) {
-        request.get("/dogs?status=" + dogsStatus)
+        request.get("/dogs?status=" + status)
             .then((response) => {
                 dispatch(dogsList(response.data));
             })
@@ -53,22 +58,22 @@ let newDogSample = {
     "name": '',
     "status": '',
     "image": '',
-    "start_date":'',
+    "start_date": '',
     "end_date": '',
     "dob": '',
     "size": '',
     "gender": '',
-    "medical_status":  '',
-    "new_name":  '',
-    "last_update":  '',
-    "is_returned":  false,
-    "comments":  ''
+    "medical_status": '',
+    "new_name": '',
+    "last_update": '',
+    "is_returned": false,
+    "comments": ''
 };
 
 export const createDog = (dog) => {
     let newDog = {
         ...newDogSample,
-        "name": dog.name ,
+        "name": dog.name,
         "status": dog.status,
         "image": dog.image,
         "start_date": dog.start_date,
@@ -155,35 +160,61 @@ export const saveDog = (dog, dogId) => {
  * Move to adopted
  * **/
 
-//export const testFn = (data) => dispatch => dispatch(moveToAdopted(data));
-
-
-export const prepareToMoveToAdopted = ({ ids }) => {
-    console.log("IDS", ids);
-
-    // let selectedIds = Object.keys(ids);
-
-    ids.forEach(id => {
-        return request.get('/dogs/' + id)
-            .then((response) => {
-                moveToAdopted(response.data);
-            })
-    })
-};
-
-export const moveToAdopted = (dog) => {
-    let dogToBeMoved = {
-        ...newDogSample,
-        "status": "adopted"
-    };
-
+export const moveToAdopted = (ids) => {
     return function (dispatch) {
-        request.post('/dogs/' + dog.id, dogToBeMoved)
-            .then(() => {
-                //dispatch(getDogsByStatus("reserved"));
-                console.log('TEST')
-            })
+        let p = new Promise((resolve, reject) => {
+            ids.forEach(id => {
+                request.get('/dogs/' + id)
+                    .then((response) => {
+                        const dogToBeMoved = {
+                            ...response.data,
+                            "status": "adopted"
+                        };
+
+                        return request.put('/dogs/' + id, dogToBeMoved)
+                            .then(() => {
+                                resolve(dispatch)
+                            })
+                    });
+            });
+        });
+
+
+        p.then((dispatch) => {
+            dispatch(getDogsByStatus("reserved"));
+        })
     }
+
+/*    return function (dispatch) {
+        const promises = [];
+
+        ids.forEach((id) => {
+            const promiseFn = new Promise((resolve, reject) => {
+                request.get('/dogs/' + id)
+                    .then((response) => {
+                        const dogToBeMoved = {
+                            ...response.data,
+                            "status": "adopted"
+                        };
+
+                        return request.put('/dogs/' + id, dogToBeMoved)
+                            .then(() => {
+                                resolve(dispatch)
+                            })
+                            .catch((err) => reject(dispatch));
+                    });
+            })
+             promises.push(promiseFn)
+
+        });
+
+        /!*return (dispatch) => *!/
+        Promise.all(promises)
+            .then(() => {
+               // dispatch(getDogsByStatus("reserved"));
+                console.log('PROMISE ALL DONE')
+            })
+    }*/
 }
 
 
@@ -193,7 +224,8 @@ export const moveToAdopted = (dog) => {
 
 export const requestFBTest = () => {
 
-    return function (dispatch) {}
+    return function (dispatch) {
+    }
 }
 
 

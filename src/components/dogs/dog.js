@@ -1,8 +1,10 @@
 import React from 'react';
+import placeholder_dog from '../../media/placeholder_dog.png';
 
 const Dog = (props) => {
     let dogItem = [];
 
+    let image = props.item.image ? props.item.image : placeholder_dog;
 
     Object.keys(props.item)
           .map((key, i) => {
@@ -14,7 +16,7 @@ const Dog = (props) => {
                       (<p className="status">{props.item.comments}</p>)
                   }
                   <div className="image">
-                      <img src={props.item.image} alt=""/>
+                      <img src={image} alt=""/>
                   </div>
               </div>
     });

@@ -9,32 +9,43 @@ import moment, {months} from "moment";
 import Chart from './prices';
 import FontAwesome from 'react-fontawesome';
 import Facebook from "./facebook";
+import Pagination from "./pagination"
+import {forEach} from "react-bootstrap/cjs/ElementChildren";
 
 class DashBoard extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            dogs: props.dogs.data || [],
+            //dogs: props.dogs.data || [],
             totalDays: "",
             currentSort: 'default',
             myValue: '',
-            ages: []
+            ages: [],
+            cost: [],
         };
 
         this.getDays = this.getDays.bind(this);
         this.calculateDob = this.calculateDob.bind(this);
     }
 
-    componentWillReceiveProps(nextProps, nextContext) {
+/*    componentWillReceiveProps(nextProps, nextContext) {
         this.setState({
             dogs: nextProps.dogs,
         })
+    }*/
+
+    componentDidMount() {
+        this.props.getDogs();
+        if (this.props.dogs.length === 0) {
+            this.calculateCostPerDog();
+        }
+       // this.props.requestFBTest()
     }
 
-    componentWillMount() {
-        this.props.getDogs();
-        this.props.requestFBTest()
-
+    componentDidUpdate(prevProps, prevState, snapshot) {
+       if (this.props.dogs.length === 0) {
+           this.calculateCostPerDog();
+       }
     }
 
     getDays(start, end) {
@@ -68,7 +79,6 @@ class DashBoard extends Component {
         })
     };
 
-
     calculateDob = (dob) => {
         let today = new Date().toISOString().split('T')[0],
             date1 = new Date(dob),
@@ -84,15 +94,20 @@ class DashBoard extends Component {
 
         if (months) {
             return (<div><span>{Math.floor(months / 12) - 1 }</span> ani si <span>{months % 12}</span> luni</div>);
-        } else {
-            return  (<p>DOB not added</p>)
         }
+
+        return  (<p>DOB not added</p>)
     };
 
-    render() {
+    calculateCostPerDog = () => {
+        const cost = this.props.dogs.map((dog) => (this.getDays(dog.start_date, dog.end_date) * 5));
+        console.log('calculateCostPerDog - dogs, cost = ', this.props.dogs, cost)
+        this.setState({ cost })
+    };
+
+    displayAnimals = () => {
         let allDogs = [],
-            dogsArrayTable = [],
-            costArray = [];
+            dogsArrayTable = [];
 
         const {currentSort} = this.state;
 
@@ -111,7 +126,7 @@ class DashBoard extends Component {
             }
         };
 
-        this.state.dogs
+        this.props.dogs
             .forEach(dog => {
                 dog.status !== "rest in peace" &&
                 dogsArrayTable.push({
@@ -127,9 +142,9 @@ class DashBoard extends Component {
 
         dogsArrayTable
             .sort(sortTypes[currentSort].fn)
-/*            .filter(dog => {
+            .filter(dog => {
                 return dog.name.toLowerCase().indexOf(this.state.myValue.toLowerCase()) >= 0
-            })*/
+            })
             .map((dog, i) => {
                 dog.status !== "rest in peace" &&
                 allDogs.push(<tr key={i} className={dog.status + " dog-item"}>
@@ -142,14 +157,40 @@ class DashBoard extends Component {
                 </tr>);
             });
 
-        this.state.dogs.map((dog) => {
-            costArray.push(this.getDays(dog.start_date, dog.end_date) * 5)
-        });
+        return allDogs;
+    }
+
+    createPagination = () => {
+        let data = [
+            '<http://localhost:3001/posts?_page=1>; rel="first", <http://localhost:3001/posts?_page=2>; rel="next", <http://localhost:3001/posts?_page=5>; rel="last"']
+
+        function parseData(data) {
+            let parsed_data = {}
+            console.log('data = ', data)
+            let arrData = data[0].split(",")
+
+            arrData.forEach(item => {
+                const  linkInfo = /<([^>]+)>;\s+rel="([^"]+)"/ig.exec(item)
+
+                parsed_data[linkInfo[2]]=linkInfo[1]
+            })
+
+            return parsed_data;
+        }
+
+        console.log('DOGS', this.props);
+        console.log('cost = ', cost);
+    }
+
+    render() {
+        const { cost } = this.state;
+
+
+
 
         return (
             <div className="container-fluid">
-                <Facebook />
-
+                {/*<Facebook />*/}
 
                 <div className="title-wrapper">
                     <p className='title'>Statistics</p>
@@ -169,18 +210,21 @@ class DashBoard extends Component {
                             <th>Number of days</th>
                             <th>Value per dog (lei)
                                 <button onClick={this.onSortChange}>
-                                    <FontAwesome className={`fas fa-${sortTypes[currentSort].class}`}/>
+                                    {/*<FontAwesome className={`fas fa-${sortTypes[currentSort].class}`}/>*/}
+                                    {/*TO DO - get class*/}
+                                    Sort
                                 </button>
                             </th>
                         </tr>
                         </thead>
                         <tbody>
-                        {allDogs}
+                        {this.displayAnimals()}
                         </tbody>
                     </Table>
+                    <Pagination dogs={this.props.dogs}/>
                 </div>
                 <div className='chart'>
-                    <Chart costs={costArray}/>
+                    <Chart costs={cost}/>
                 </div>
             </div>
         )

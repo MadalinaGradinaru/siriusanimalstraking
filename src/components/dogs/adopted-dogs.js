@@ -13,7 +13,6 @@ class AdoptedDogs extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            dogs: props.dogs.data || [],
             myValue: ''
         };
     }
@@ -61,7 +60,7 @@ class AdoptedDogs extends Component {
         return (
             <div className="container-fluid">
                 <div className="title-wrapper">
-                    <p className='title'> All resident will be rendered here - {this.state.dogs.length}</p>
+                    <p className='title'> All resident will be rendered here - {this.props.dogs.length}</p>
                 </div>
                 <input type="text"
                        placeholder='Search by title'
