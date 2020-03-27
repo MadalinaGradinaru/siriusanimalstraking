@@ -17,10 +17,10 @@ class ResidentsDogs extends Component {
         };
     }
 
-    componentWillReceiveProps(nextProps, nextContext) {
-        this.setState({
-            dogs: nextProps.dogs,
-        })
+    static getDerivedStateFromProps(props, state) {
+        return {
+            dogs: props.dogs
+        }
     }
 
     componentWillMount() {

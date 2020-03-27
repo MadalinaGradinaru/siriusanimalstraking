@@ -16,34 +16,36 @@ class DashBoard extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            //dogs: props.dogs.data || [],
+            dogs: [],
             totalDays: "",
             currentSort: 'default',
             myValue: '',
             ages: [],
             cost: [],
+            pagination: ''
         };
 
         this.getDays = this.getDays.bind(this);
         this.calculateDob = this.calculateDob.bind(this);
     }
 
-/*    componentWillReceiveProps(nextProps, nextContext) {
-        this.setState({
-            dogs: nextProps.dogs,
-        })
-    }*/
+    static getDerivedStateFromProps(props, state) {
+        return {
+            pagination: props.pagination,
+            dogs: props.dogs
+        }
+    }
 
     componentDidMount() {
-        this.props.getDogs();
-        if (this.props.dogs.length === 0) {
+        this.props.getDogs(1);
+        if (this.state.dogs.length !== 0) {
             this.calculateCostPerDog();
         }
-       // this.props.requestFBTest()
+       // this.props.requestFBTest() facebook login
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-       if (this.props.dogs.length === 0) {
+       if (this.state.dogs.length !== 0) {
            this.calculateCostPerDog();
        }
     }
@@ -80,17 +82,17 @@ class DashBoard extends Component {
     };
 
     calculateDob = (dob) => {
-        let today = new Date().toISOString().split('T')[0],
-            date1 = new Date(dob),
-            date1Year = new Date(today).getFullYear(),
-            date2Year = date1 !== undefined ? new Date(dob).getFullYear() : "",
-            date1Month = new Date(today).getMonth(),
-            date2Month = date1 !== undefined ? new Date(dob).getMonth() : "";
+        let currentDate = new Date().toISOString().split('T')[0],
+            dateOfBirth = new Date(dob),
+            currentDateYear = new Date(currentDate).getFullYear(),
+            dateOfBirthYear = dateOfBirth !== undefined ? new Date(dob).getFullYear() : "",
+            currentDateMonth = new Date(currentDate).getMonth(),
+            dateOfBirthMonth = dateOfBirth !== undefined ? new Date(dob).getMonth() : "";
 
         var months;
-        months = (date1Year - date2Year) * 12;
-        months -= date1Month + 1;
-        months += date2Month;
+        months = (currentDateYear - dateOfBirthYear) * 12;
+        months -= currentDateMonth + 1;
+        months += dateOfBirthMonth;
 
         if (months) {
             return (<div><span>{Math.floor(months / 12) - 1 }</span> ani si <span>{months % 12}</span> luni</div>);
@@ -100,9 +102,10 @@ class DashBoard extends Component {
     };
 
     calculateCostPerDog = () => {
+        console.log('PROPS', this.props.dogs);
         const cost = this.props.dogs.map((dog) => (this.getDays(dog.start_date, dog.end_date) * 5));
-        console.log('calculateCostPerDog - dogs, cost = ', this.props.dogs, cost)
-        this.setState({ cost })
+        console.log('calculateCostPerDog - dogs, cost = ', this.props.dogs, cost);
+        // this.setState({ cost:cost })
     };
 
     displayAnimals = () => {
@@ -161,32 +164,26 @@ class DashBoard extends Component {
     }
 
     createPagination = () => {
-        let data = [
-            '<http://localhost:3001/posts?_page=1>; rel="first", <http://localhost:3001/posts?_page=2>; rel="next", <http://localhost:3001/posts?_page=5>; rel="last"']
+        let data = [this.state.pagination]
 
-        function parseData(data) {
+
+        if (data[0] != undefined) {
             let parsed_data = {}
-            console.log('data = ', data)
             let arrData = data[0].split(",")
 
             arrData.forEach(item => {
                 const  linkInfo = /<([^>]+)>;\s+rel="([^"]+)"/ig.exec(item)
 
-                parsed_data[linkInfo[2]]=linkInfo[1]
+                parsed_data[linkInfo[2]]=linkInfo[1].split('=')[1]
             })
 
             return parsed_data;
         }
+    };
 
-        console.log('DOGS', this.props);
-        console.log('cost = ', cost);
-    }
 
     render() {
         const { cost } = this.state;
-
-
-
 
         return (
             <div className="container-fluid">
@@ -221,7 +218,8 @@ class DashBoard extends Component {
                         {this.displayAnimals()}
                         </tbody>
                     </Table>
-                    <Pagination dogs={this.props.dogs}/>
+                    <Pagination pagination={this.createPagination()}
+                                getData={this.props.getDogs}/>
                 </div>
                 <div className='chart'>
                     <Chart costs={cost}/>
@@ -233,7 +231,8 @@ class DashBoard extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        dogs: state.AnimalsReducer.dogs
+        dogs: state.AnimalsReducer.dogs,
+        pagination: state.AnimalsReducer.pagination
     };
 };
 

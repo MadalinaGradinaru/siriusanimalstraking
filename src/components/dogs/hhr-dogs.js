@@ -11,15 +11,14 @@ class HHRDogs extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            dogs: props.dogs.data || [],
             myValue: ''
         };
     }
 
-    componentWillReceiveProps(nextProps, nextContext) {
-        this.setState({
-            dogs: nextProps.dogs,
-        })
+    static getDerivedStateFromProps(props, state) {
+        return {
+            dogs: props.dogs
+        }
     }
 
     componentWillMount() {

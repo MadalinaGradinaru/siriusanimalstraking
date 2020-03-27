@@ -7,18 +7,11 @@ import logger from "less/lib/less/logger";
  *  ALL DOGS
  * */
 
-export const getDogs = (page, limit) => {
-
-/*    let pagination = page === undefined ? '' : '?_page=' + page;
-    let limitation = limit === undefined ? '' : '?_limit=' + limit;*/
-    let p = 1;
-    let l = 10;
-
+export const getDogs = (page) => {
     return function (dispatch) {
-         request.get("/dogs?_page=" + p )
-        // request.get("/dogs" )
+         request.get("/dogs?_page=" + page )
             .then((response) => {
-                //console.log(response.headers.link);
+                dispatch(pagination(response.headers.link));
                 dispatch(dogsList(response.data));
             })
     }
@@ -40,6 +33,13 @@ const dogsList = (dogs) => {
     return {
         type: 'ALL_DOGS',
         payload: dogs
+    }
+};
+
+const pagination = (p) => {
+    return {
+        type: 'PAGINATION',
+        payload: p
     }
 };
 

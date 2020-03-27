@@ -4,7 +4,7 @@ export const AnimalsReducer = (state = initialState.animals, action) => {
         case 'ALL_DOGS':
             return {
                 ...state,
-                dogs: action.payload,
+                dogs: action.payload
             };
         case 'DOG_TO_BE_EDITED' : {
             return {
@@ -19,6 +19,11 @@ export const AnimalsReducer = (state = initialState.animals, action) => {
                 formType: action.payload.formType,
                 dog: action.payload,
                 status: action.payload.status
+            };
+        case 'PAGINATION':
+            return {
+                ...state,
+                pagination: action.payload
             };
         default :
             return state;
