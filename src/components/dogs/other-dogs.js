@@ -17,12 +17,6 @@ class OtherDogs extends Component {
         };
     }
 
-    static getDerivedStateFromProps(props, state) {
-        return {
-            dogs: props.dogs
-        }
-    }
-
     componentWillMount() {
         this.props.getDogsByStatus('other');
         localStorage.setItem('status', "other")
@@ -53,7 +47,11 @@ class OtherDogs extends Component {
                 />)
             );
 
-        return dogItem;
+        if (dogItem.length > 0) {
+            return dogItem
+        } else {
+            return (<div>No dogs available</div>)
+        }
     }
 
     render() {

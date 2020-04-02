@@ -8,8 +8,10 @@ import logger from "less/lib/less/logger";
  * */
 
 export const getDogs = (page) => {
+    let p = page !== undefined ? page : '';
+
     return function (dispatch) {
-         request.get("/dogs?_page=" + page )
+         request.get("/dogs?_page=" + p )
             .then((response) => {
                 dispatch(pagination(response.headers.link));
                 dispatch(dogsList(response.data));

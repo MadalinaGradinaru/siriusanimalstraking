@@ -21,7 +21,6 @@ class DashBoard extends Component {
             currentSort: 'default',
             myValue: '',
             ages: [],
-            cost: [],
             pagination: ''
         };
 
@@ -56,7 +55,7 @@ class DashBoard extends Component {
         }
 
         let startDay = moment(start, 'YYYY-MM-DD'),
-            endDate = moment(end, 'YYYY-MM-DD'),
+            endDate = end ? moment(end, 'YYYY-MM-DD') : moment(),
             days = endDate.diff(startDay, 'days');
 
         return days
@@ -102,10 +101,7 @@ class DashBoard extends Component {
     };
 
     calculateCostPerDog = () => {
-        console.log('PROPS', this.props.dogs);
-        const cost = this.props.dogs.map((dog) => (this.getDays(dog.start_date, dog.end_date) * 5));
-        console.log('calculateCostPerDog - dogs, cost = ', this.props.dogs, cost);
-        // this.setState({ cost:cost })
+        this.props.dogs.map(dog => (this.getDays(dog.start_date, dog.end_date) * 5));
     };
 
     displayAnimals = () => {

@@ -17,12 +17,6 @@ class Dogs extends Component {
         };
     }
 
-    static getDerivedStateFromProps(props, state) {
-        return {
-            dogs: props.dogs
-        }
-    }
-
     componentWillMount() {
         this.props.getDogs();
         localStorage.setItem('status', "")
@@ -52,14 +46,18 @@ class Dogs extends Component {
                 />)
             );
 
-        return dogItem;
+        if (dogItem.length > 0) {
+            return dogItem
+        } else {
+            return (<div>No dogs available</div>)
+        }
     };
 
     render() {
         return (
             <div className="container-fluid">
                 <div className="title-wrapper">
-                    <p className='title'> All dogs will be rendered here - {this.state.dogs.length}</p>
+                    <p className='title'> All dogs will be rendered here - {this.props.dogs.length}</p>
                     <input type="text"
                            placeholder='Search by title'
                            ref={(value) => this.myValue = value}

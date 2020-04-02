@@ -80,7 +80,11 @@ class ReservedDogs extends Component {
                 />)
             );
 
-        return dogItem;
+        if (dogItem.length > 0) {
+            return dogItem
+        } else {
+            return (<div>No dogs available</div>)
+        }
     }
 
     render() {

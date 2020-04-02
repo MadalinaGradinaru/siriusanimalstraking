@@ -15,16 +15,10 @@ class HHRDogs extends Component {
         };
     }
 
-    static getDerivedStateFromProps(props, state) {
-        return {
-            dogs: props.dogs
-        }
-    }
-
     componentWillMount() {
+        console.log('STATUS GONE')
         this.props.getDogsByStatus('gone');
         localStorage.setItem('status', "gone")
-
     }
 
     filterByTitle = () => {
@@ -33,20 +27,30 @@ class HHRDogs extends Component {
         })
     };
 
-    render() {
+    displayAnimals = () => {
+        const {dogs} = this.props;
+
         let dogItem = [];
 
-        dogItem = this.state.dogs
-/*            .filter(dog => {
-                return dog.name.toLowerCase().indexOf(this.state.myValue.toLowerCase()) >= 0
-            })*/
-            .map(dog => (<Dog key={"dog_" + dog.id}
-                              item={dog}
-                              openEditDogModal={this.props.openEditDogModal}
-                              dogToBeEdited={this.props.openDogToBeEdited}
-                              edit/>)
+        dogItem = dogs.filter(dog => {
+            return dog.name.toLowerCase().indexOf(this.state.myValue.toLowerCase()) >= 0
+        })
+            .map(dog => (<Dog
+                    key={`doc-${dog.id}`}
+                    item={dog}
+                    openEditDogModal={this.props.openEditDogModal}
+                    dogToBeEdited={this.props.openDogToBeEdited}
+                    edit
+                />)
             );
+        if (dogItem.length > 0) {
+            return dogItem
+        } else {
+            return (<div>No dogs available</div>)
+        }
+    };
 
+    render() {
         return (
             <div className="container-fluid">
                 <div className="title-wrapper">
@@ -57,7 +61,7 @@ class HHRDogs extends Component {
                        ref={(value) => this.myValue = value}
                        onChange={this.filterByTitle}/>
                 <div className="dogs row">
-                    {dogItem}
+                    {this.displayAnimals()}
                 </div>
             </div>
         )

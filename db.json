@@ -2,7 +2,7 @@
   "dogs": [
     {
       "name": "Twinckle",
-      "status": "adopted",
+      "status": "gone",
       "image": "https://scontent.fclj2-1.fna.fbcdn.net/v/t1.0-0/c29.0.177.176a/p235x165/84333652_1430493553792144_6176635284906573824_n.jpg?_nc_cat=110&_nc_ohc=__86X6PLV8YAX9IgPGy&_nc_ht=scontent.fclj2-1.fna&oh=27e140ecf2fa4b7c9d5c4e2c207cd7fc&oe=5ECB36EE",
       "start_date": "",
       "end_date": "",
@@ -10015,7 +10015,7 @@
     {
       "id": 5,
       "name": "Mira",
-      "status": "",
+      "status": "gone",
       "image": "",
       "age": "",
       "size": "medium",

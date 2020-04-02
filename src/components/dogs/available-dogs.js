@@ -17,11 +17,6 @@ class AvailableDogs extends Component {
         };
     }
 
-    static getDerivedStateFromProps(props, state) {
-        return {
-            dogs: props.dogs
-        }
-    }
 
     componentWillMount() {
         this.props.getDogsByStatus('available');
@@ -51,8 +46,12 @@ class AvailableDogs extends Component {
                 />)
             );
 
-        return dogItem;
-    }
+        if (dogItem.length > 0) {
+            return dogItem
+        } else {
+            return (<div>No dogs available</div>)
+        }
+    };
 
     render() {
         return (
